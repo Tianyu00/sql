@@ -800,6 +800,48 @@ WHERE name = 'Art Garfunkel'
 )
 ```
 
+quiz
+
+```
+SELECT name
+  FROM actor INNER JOIN movie ON actor.id = director
+ WHERE gross < budget
+```
+
+```
+SELECT *
+  FROM actor JOIN casting ON actor.id = actorid
+  JOIN movie ON movie.id = movieid
+```
+
+```
+SELECT name, COUNT(movieid)
+  FROM casting JOIN actor ON actorid=actor.id
+ WHERE name LIKE 'John %'
+ GROUP BY name ORDER BY 2 DESC
+```
+
+```
+SELECT title 
+   FROM movie JOIN casting ON (movieid=movie.id)
+              JOIN actor   ON (actorid=actor.id)
+  WHERE name='Paul Hogan' AND ord = 1
+```
+
+```
+SELECT name
+  FROM movie JOIN casting ON movie.id = movieid
+  JOIN actor ON actor.id = actorid
+WHERE ord = 1 AND director = 351
+```
+
+```
+SELECT title, yr 
+   FROM movie, casting, actor 
+  WHERE name='Robert De Niro' AND movieid=movie.id AND actorid=actor.id AND ord = 3
+```
+
+
 ## Using Null
 ```
 SELECT name FROM teacher
@@ -851,4 +893,156 @@ FROM teacher
 ```
 SELECT name, CASE WHEN dept IN (1,2) THEN 'Sci' WHEN dept = 3 THEN 'Art' ELSE 'None' END
 FROM teacher
+```
+
+quiz
+
+```
+SELECT teacher.name, dept.name FROM teacher LEFT OUTER JOIN dept ON (teacher.dept = dept.id)
+```
+
+```
+SELECT dept.name FROM teacher JOIN dept ON (dept.id = teacher.dept) WHERE teacher.name = 'Cutflower'
+```
+
+```
+SELECT dept.name, COUNT(teacher.name) FROM teacher RIGHT JOIN dept ON dept.id = teacher.dept GROUP BY dept.name
+```
+
+```
+SELECT name, dept, COALESCE(dept, 0) AS result FROM teacher
+```
+
+```
+SELECT name,
+       CASE WHEN phone = 2752 THEN 'two'
+            WHEN phone = 2753 THEN 'three'
+            WHEN phone = 2754 THEN 'four'
+            END AS digit
+  FROM teacher
+```
+
+```
+SELECT name, 
+      CASE 
+       WHEN dept 
+        IN (1) 
+        THEN 'Computing' 
+       ELSE 'Other' 
+      END 
+  FROM teacher
+```
+
+## Self join
+```
+SELECT COUNT(*)
+FROM stops
+```
+
+```
+SELECT id
+FROM stops
+WHERE name = 'Craiglockhart'
+```
+
+```
+SELECT id, name
+FROM stops JOIN route ON id = route.stop
+WHERE num = '4' AND company = 'LRT'
+```
+
+```
+SELECT company, num, COUNT(*)
+FROM route WHERE stop=149 OR stop=53
+GROUP BY company, num
+HAVING COUNT(*) = 2
+```
+
+```
+SELECT a.company, a.num, a.stop, b.stop
+FROM route a JOIN route b ON
+  (a.company=b.company AND a.num=b.num)
+WHERE a.stop=53 AND b.stop = 
+(
+SELECT id
+FROM stops
+WHERE name = 'London Road'
+)
+```
+
+```
+SELECT a.company, a.num, stopa.name, stopb.name
+FROM route a JOIN route b ON
+  (a.company=b.company AND a.num=b.num)
+  JOIN stops stopa ON (a.stop=stopa.id)
+  JOIN stops stopb ON (b.stop=stopb.id)
+WHERE stopa.name='Craiglockhart' AND stopb.name = 'London Road'
+```
+
+```
+SELECT DISTINCT R1.company, R1.num FROM route R1, route R2
+WHERE R1.stop = 115 AND R2.stop = 137 AND R1.num = R2.num AND R1.company = R2.company
+```
+
+```
+SELECT DISTINCT R1.company, R1.num FROM route R1, route R2
+WHERE R1.stop =
+(SELECT id
+FROM stops
+WHERE name = 'Craiglockhart')
+ AND R2.stop = 
+(SELECT id
+FROM stops
+WHERE name = 'Tollcross')
+ AND R1.num = R2.num AND R1.company = R2.company
+```
+
+```
+SELECT DISTINCT S2.name, R2.company, R2.num
+FROM route R1, route R2, stops S1, stops S2
+WHERE R1.stop = S1.id AND R2.stop = S2.id 
+AND R1.num = R2.num AND R1.company = R2.company
+AND S1.name = 'Craiglockhart' 
+```
+
+```
+SELECT DISTINCT first_trip.num, first_trip.company, first_trip.name, second_trip.num, second_trip.company
+FROM
+(SELECT DISTINCT S2.name AS name, R2.company AS company, R2.num AS num
+FROM route R1, route R2, stops S1, stops S2
+WHERE R1.stop = S1.id AND R2.stop = S2.id 
+AND R1.num = R2.num AND R1.company = R2.company
+AND S1.name = 'Craiglockhart') AS first_trip, 
+(SELECT DISTINCT S2.name AS name, R2.company AS company, R2.num AS num
+FROM route R1, route R2, stops S1, stops S2
+WHERE R1.stop = S1.id AND R2.stop = S2.id 
+AND R1.num = R2.num AND R1.company = R2.company
+AND S1.name = 'Lochend') AS second_trip
+WHERE first_trip.name = second_trip.name
+```
+
+quiz
+
+```
+SELECT DISTINCT a.name, b.name
+  FROM stops a JOIN route z ON a.id=z.stop
+  JOIN route y ON y.num = z.num
+  JOIN stops b ON y.stop=b.id
+ WHERE a.name='Craiglockhart' AND b.name ='Haymarket'
+```
+
+```
+SELECT S2.id, S2.name, R2.company, R2.num
+  FROM stops S1, stops S2, route R1, route R2
+ WHERE S1.name='Haymarket' AND S1.id=R1.stop
+   AND R1.company=R2.company AND R1.num=R2.num
+   AND R2.stop=S2.id AND R2.num='2A'
+```
+
+```
+SELECT a.company, a.num, stopa.name, stopb.name
+  FROM route a JOIN route b ON (a.company=b.company AND a.num=b.num)
+  JOIN stops stopa ON (a.stop=stopa.id)
+  JOIN stops stopb ON (b.stop=stopb.id)
+ WHERE stopa.name='Tollcross'
 ```
