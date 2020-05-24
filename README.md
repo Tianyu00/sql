@@ -1,7 +1,16 @@
 # sql
 [cheat sheet](https://cdn.sqltutorial.org/wp-content/uploads/2016/04/SQL-cheat-sheet.pdf)
 
-[SQL Query Order of Execution](https://www.sisense.com/blog/sql-query-order-of-operations/)
+# websites
+- [SQL Query Order of Execution](https://www.sisense.com/blog/sql-query-order-of-operations/)
+- [sqltutorial.org](https://www.sqltutorial.org)
+- [Tech on the Net SQL tutorial](https://www.techonthenet.com/sql/index.php)
+- [Tutorial point SQL tutorial](https://www.tutorialspoint.com/sql/sql-alter-command.htm)
+
+# content
+- [sqlzoo](#sqlzoo)
+- [w3resource sql exercise](#w3resouce)
+- [Learning SQL - Alan Beaulieu](#learning-sql)
 
 
 # sqlzoo
@@ -1046,3 +1055,157 @@ SELECT a.company, a.num, stopa.name, stopb.name
   JOIN stops stopb ON (b.stop=stopb.id)
  WHERE stopa.name='Tollcross'
 ```
+
+
+# w3resource sql exercise
+https://www.w3resource.com/sql-exercises/
+
+## Retrieve data from tables
+```
+SELECT 'aaaa';
+```
+
+```
+SELECT 1 AS COL1, 2 AS COL2, 3 AS COL3;
+```
+
+## Wildcard and Special operators
+
+```
+SELECT *
+FROM salesman
+WHERE name LIKE 'N__l%';
+
+WHERE col1 LIKE '%/_%' ESCAPE '/';
+WHERE col1 LIKE '%//%' ESCAPE '/';
+WHERE col1 LIKE '%/_//%' ESCAPE '/';
+WHERE col1 LIKE '%/%%' ESCAPE'/';
+```
+
+## Aggregate Functions
+```
+SELECT COUNT (DISTINCT salesman_id) 
+```
+
+```
+SELECT COUNT(*)
+FROM salesman
+WHERE TRIM(city) IS NOT NULL
+TRIM: SELECT TRIM('#! ' FROM '    #SQL Tutorial!    ') AS TrimmedString;
+```
+
+
+## Formatting Output
+```
+select concat((commission*100),'%'), salesman_id, name, city
+```
+
+```
+SELECT CONCAT('For',' ',ord_date,' ','there are',' ',COUNT(ord_no),' ','orders')
+FROM orders
+GROUP BY ord_date
+```
+
+## SQL JOINS 
+(didn't do)
+
+## SUBQUERIES
+(didn't finish)
+
+```
+SELECT first_name ||' '||last_name AS Full_Name, salary
+  FROM employees
+    WHERE salary < 6000;
+```
+
+## SORTING and FILTERING on HR Database
+need to look at
+
+## SUBQUERIES on HR database
+didn't read
+
+## JOINS on HR Database
+didn't read
+
+## UNION
+```
+SELECT salesman_id, city
+FROM customer
+UNION
+(SELECT salesman_id, city
+FROM salesman)
+```
+
+# Learning SQL
+
+## preface
+“The SQL language is broken into several categories. Statements used to create database objects (tables, indexes, constraints, etc.) are collectively known as SQL schema statements. The statements used to create, manipulate, and retrieve the data stored in a database are known as the SQL data statements. If you are an administrator, you will be using both SQL schema and SQL data statements. If you are a programmer or report writer, you may only need to use (or be allowed to use) SQL data statements. While this book demonstrates many of the SQL schema statements, the main focus of this book is on programming features.”
+
+## “Chapter 1. A Little Background”
+
+MySQL command-line tool
+
+/* comment */
+
+## “Chapter 2. Creating and Populating a Database”
+
+### MySQL Data Types
+
+“char(20)    /* fixed-length */
+
+varchar(20) /* variable-length */”
+
+“ In general, you should use the char type when all strings to be stored in the column are of the same length, such as state abbreviations, and the varchar type when strings to be stored in the column are of varying lengths. ”
+
+character set
+
+“varchar(20) character set latin1”
+
+Text Type: Tinytext 255, Text, Mediumtext, Longtext
+
+Numeric data: Tinyint, Smallint, Mediumint, Int, Bigint
+
+Float (p,s), Double
+
+(unsigned)
+
+temporal data: date (yyyy-mm-dd), datetime(yyyy-mm-dd hh:mi:ss), timestamp (yyyy-mm-dd hh:mi:ss), year yyyy, time hhh:mi:ss
+
+### table creation
+
+1 design, 2 refinement, 3 building SQL Schema Statements
+
+```
+CREATE TABLE person
+ (person_id SMALLINT UNSIGNED,
+  fname VARCHAR(20),
+  lname VARCHAR(20),
+  /* eye_color CHAR(2) CHECK (eye_color IN ('BR','BL','GR')), */
+  eye_color ENUM('BR','BL','GR'),
+  birth_date DATE,
+  street VARCHAR(30),
+  city VARCHAR(20),
+  state VARCHAR(20),
+  country VARCHAR(20),
+  postal_code VARCHAR(20),
+  CONSTRAINT pk_person PRIMARY KEY (person_id)
+ );
+```
+
+```
+CREATE TABLE favorite_food
+    (person_id SMALLINT UNSIGNED,
+    food VARCHAR(20),
+    CONSTRAINT pk_favorite_food PRIMARY KEY (person_id, food),
+    CONSTRAINT fk_fav_food_person_id FOREIGN KEY (person_id)
+    REFERENCES person (person_id)
+    );
+```
+
+“he favorite_food table contains another type of constraint called a foreign key constraint. This constrains the values of the person_id column in the favorite_food table to include only values found in the person table.”
+
+```
+desc favorite_food;
+```
+
+### populating and modifying tables
