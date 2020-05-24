@@ -1,4 +1,6 @@
 # sql
+[cheat sheet](https://cdn.sqltutorial.org/wp-content/uploads/2016/04/SQL-cheat-sheet.pdf)
+
 [SQL Query Order of Execution](https://www.sisense.com/blog/sql-query-order-of-operations/)
 
 
