@@ -1,4 +1,5 @@
 # sql
+[SQL Query Order of Execution](https://www.sisense.com/blog/sql-query-order-of-operations/)
 
 
 # sqlzoo
